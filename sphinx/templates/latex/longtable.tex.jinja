@@ -37,7 +37,7 @@
 \begin{longtable}<%= table.get_colspec() %>
 <%- if table.caption -%>
 \sphinxthelongtablecaptionisattop
-\caption{<%= ''.join(table.caption) %>\strut}<%= labels %>\\*[\sphinxlongtablecapskipadjust]
+\caption*{<%= ''.join(table.caption) %>\strut}<%= labels %>\\*[\sphinxlongtablecapskipadjust]
 <% elif labels -%>
 \noalign{\phantomsection<%= labels %>}%
 <% endif -%>
@@ -49,7 +49,7 @@
 \endfirsthead
 
 \multicolumn{<%= table.colcount %>}{c}{\sphinxnorowcolor
-    \makebox[0pt]{\sphinxtablecontinued{\tablename\ \thetable{} \textendash{} <%= _('continued from previous page') %>}}%
+    \makebox[0pt]{\sphinxtablecontinued{<%= _('continued from previous page') %>}}%
 }\\
 \sphinxtoprule
 <%= ''.join(table.header) -%>
