@@ -163,7 +163,22 @@
 % longtable ignores \abovecaptionskip/\belowcaptionskip, so do the same here
             \abovecaptionskip\sphinxabovecaptionskip % \z@skip
             \belowcaptionskip\sphinxbelowcaptionskip % \z@skip
-            \caption*[{#1}]%
+            \caption[{#1}]%
+               {\strut\ignorespaces#2\ifhmode\unskip\@finalstrut\strutbox\fi}%
+           }\hss}%
+   \par\prevdepth\dp\strutbox
+}%
+\makeatletter
+\newcommand\sphinxcaptionstar{\@dblarg\spx@captionstar}%
+\long\def\spx@captionstar[#1]#2{%
+   \noindent\hb@xt@\linewidth{\hss
+      \vtop{\@tempdima\dimexpr\sphinxtablecapwidth\relax
+% don't exceed linewidth for the caption width
+            \ifdim\@tempdima>\linewidth\hsize\linewidth\else\hsize\@tempdima\fi
+% longtable ignores \abovecaptionskip/\belowcaptionskip, so do the same here
+            \abovecaptionskip\sphinxabovecaptionskip % \z@skip
+            \belowcaptionskip\sphinxbelowcaptionskip % \z@skip
+            \caption*%
                {\strut\ignorespaces#2\ifhmode\unskip\@finalstrut\strutbox\fi}%
            }\hss}%
    \par\prevdepth\dp\strutbox
