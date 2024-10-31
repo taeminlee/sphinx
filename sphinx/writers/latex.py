@@ -209,7 +209,11 @@ class Table:
                 + CR
             )
         else:
-            return '{' + _colsep + (('l' + _colsep) * self.colcount) + '}' + CR
+            # 2024-10-31 tabularyX 사용하도록 fix
+            total = sum(self.colwidths)
+            colspecs = [r'\X{%d}{%d}' % (width, total) for width in self.colwidths]
+            return f'{{{_colsep}{_colsep.join(colspecs)}{_colsep}}}' + CR
+            # return '{' + _colsep + (('l' + _colsep) * self.colcount) + '}' + CR
 
     def add_cell(self, height: int, width: int) -> None:
         """Adds a new cell to a table.
