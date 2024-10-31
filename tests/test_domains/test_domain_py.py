@@ -206,8 +206,8 @@ def test_domain_py_xrefs_abbreviations(app):
 def test_domain_py_objects(app):
     app.build(force_all=True)
 
-    modules = app.env.domains['py'].data['modules']
-    objects = app.env.domains['py'].data['objects']
+    modules = app.env.domains.python_domain.data['modules']
+    objects = app.env.domains.python_domain.data['objects']
 
     assert 'module_a.submodule' in modules
     assert 'module_a.submodule' in objects
@@ -264,7 +264,7 @@ def test_resolve_xref_for_properties(app):
 @pytest.mark.sphinx('dummy', testroot='domain-py')
 def test_domain_py_find_obj(app):
     def find_obj(modname, prefix, obj_name, obj_type, searchmode=0):
-        return app.env.domains['py'].find_obj(
+        return app.env.domains.python_domain.find_obj(
             app.env, modname, prefix, obj_name, obj_type, searchmode
         )
 
@@ -569,37 +569,70 @@ def test_module_index(app):
         '.. py:module:: sphinx_intl\n'
     )
     restructuredtext.parse(app, text)
-    index = PythonModuleIndex(app.env.get_domain('py'))
+    index = PythonModuleIndex(app.env.domains.python_domain)
     assert index.generate() == (
         [
-            ('d', [IndexEntry('docutils', 0, 'index', 'module-docutils', '', '', '')]),
+            (
+                'd',
+                [
+                    IndexEntry(
+                        name='docutils',
+                        subtype=0,
+                        docname='index',
+                        anchor='module-docutils',
+                        extra='',
+                        qualifier='',
+                        descr='',
+                    ),
+                ],
+            ),
             (
                 's',
                 [
-                    IndexEntry('sphinx', 1, 'index', 'module-sphinx', '', '', ''),
                     IndexEntry(
-                        'sphinx.builders',
-                        2,
-                        'index',
-                        'module-sphinx.builders',
-                        '',
-                        '',
-                        '',
+                        name='sphinx',
+                        subtype=1,
+                        docname='index',
+                        anchor='module-sphinx',
+                        extra='',
+                        qualifier='',
+                        descr='',
                     ),
                     IndexEntry(
-                        'sphinx.builders.html',
-                        2,
-                        'index',
-                        'module-sphinx.builders.html',
-                        '',
-                        '',
-                        '',
+                        name='sphinx.builders',
+                        subtype=2,
+                        docname='index',
+                        anchor='module-sphinx.builders',
+                        extra='',
+                        qualifier='',
+                        descr='',
                     ),
                     IndexEntry(
-                        'sphinx.config', 2, 'index', 'module-sphinx.config', '', '', ''
+                        name='sphinx.builders.html',
+                        subtype=2,
+                        docname='index',
+                        anchor='module-sphinx.builders.html',
+                        extra='',
+                        qualifier='',
+                        descr='',
                     ),
                     IndexEntry(
-                        'sphinx_intl', 0, 'index', 'module-sphinx_intl', '', '', ''
+                        name='sphinx.config',
+                        subtype=2,
+                        docname='index',
+                        anchor='module-sphinx.config',
+                        extra='',
+                        qualifier='',
+                        descr='',
+                    ),
+                    IndexEntry(
+                        name='sphinx_intl',
+                        subtype=0,
+                        docname='index',
+                        anchor='module-sphinx_intl',
+                        extra='',
+                        qualifier='',
+                        descr='',
                     ),
                 ],
             ),
@@ -612,15 +645,29 @@ def test_module_index(app):
 def test_module_index_submodule(app):
     text = '.. py:module:: sphinx.config\n'
     restructuredtext.parse(app, text)
-    index = PythonModuleIndex(app.env.get_domain('py'))
+    index = PythonModuleIndex(app.env.domains.python_domain)
     assert index.generate() == (
         [
             (
                 's',
                 [
-                    IndexEntry('sphinx', 1, '', '', '', '', ''),
                     IndexEntry(
-                        'sphinx.config', 2, 'index', 'module-sphinx.config', '', '', ''
+                        name='sphinx',
+                        subtype=1,
+                        docname='',
+                        anchor='',
+                        extra='',
+                        qualifier='',
+                        descr='',
+                    ),
+                    IndexEntry(
+                        name='sphinx.config',
+                        subtype=2,
+                        docname='index',
+                        anchor='module-sphinx.config',
+                        extra='',
+                        qualifier='',
+                        descr='',
                     ),
                 ],
             )
@@ -633,11 +680,37 @@ def test_module_index_submodule(app):
 def test_module_index_not_collapsed(app):
     text = '.. py:module:: docutils\n.. py:module:: sphinx\n'
     restructuredtext.parse(app, text)
-    index = PythonModuleIndex(app.env.get_domain('py'))
+    index = PythonModuleIndex(app.env.domains.python_domain)
     assert index.generate() == (
         [
-            ('d', [IndexEntry('docutils', 0, 'index', 'module-docutils', '', '', '')]),
-            ('s', [IndexEntry('sphinx', 0, 'index', 'module-sphinx', '', '', '')]),
+            (
+                'd',
+                [
+                    IndexEntry(
+                        name='docutils',
+                        subtype=0,
+                        docname='index',
+                        anchor='module-docutils',
+                        extra='',
+                        qualifier='',
+                        descr='',
+                    ),
+                ],
+            ),
+            (
+                's',
+                [
+                    IndexEntry(
+                        name='sphinx',
+                        subtype=0,
+                        docname='index',
+                        anchor='module-sphinx',
+                        extra='',
+                        qualifier='',
+                        descr='',
+                    ),
+                ],
+            ),
         ],
         True,
     )
@@ -659,29 +732,29 @@ def test_modindex_common_prefix(app):
         '.. py:module:: sphinx_intl\n'
     )
     restructuredtext.parse(app, text)
-    index = PythonModuleIndex(app.env.get_domain('py'))
+    index = PythonModuleIndex(app.env.domains.python_domain)
     assert index.generate() == (
         [
             (
                 'b',
                 [
                     IndexEntry(
-                        'sphinx.builders',
-                        1,
-                        'index',
-                        'module-sphinx.builders',
-                        '',
-                        '',
-                        '',
+                        name='sphinx.builders',
+                        subtype=1,
+                        docname='index',
+                        anchor='module-sphinx.builders',
+                        extra='',
+                        qualifier='',
+                        descr='',
                     ),
                     IndexEntry(
-                        'sphinx.builders.html',
-                        2,
-                        'index',
-                        'module-sphinx.builders.html',
-                        '',
-                        '',
-                        '',
+                        name='sphinx.builders.html',
+                        subtype=2,
+                        docname='index',
+                        anchor='module-sphinx.builders.html',
+                        extra='',
+                        qualifier='',
+                        descr='',
                     ),
                 ],
             ),
@@ -689,17 +762,50 @@ def test_modindex_common_prefix(app):
                 'c',
                 [
                     IndexEntry(
-                        'sphinx.config', 0, 'index', 'module-sphinx.config', '', '', ''
-                    )
+                        name='sphinx.config',
+                        subtype=0,
+                        docname='index',
+                        anchor='module-sphinx.config',
+                        extra='',
+                        qualifier='',
+                        descr='',
+                    ),
                 ],
             ),
-            ('d', [IndexEntry('docutils', 0, 'index', 'module-docutils', '', '', '')]),
+            (
+                'd',
+                [
+                    IndexEntry(
+                        name='docutils',
+                        subtype=0,
+                        docname='index',
+                        anchor='module-docutils',
+                        extra='',
+                        qualifier='',
+                        descr='',
+                    ),
+                ],
+            ),
             (
                 's',
                 [
-                    IndexEntry('sphinx', 0, 'index', 'module-sphinx', '', '', ''),
                     IndexEntry(
-                        'sphinx_intl', 0, 'index', 'module-sphinx_intl', '', '', ''
+                        name='sphinx',
+                        subtype=0,
+                        docname='index',
+                        anchor='module-sphinx',
+                        extra='',
+                        qualifier='',
+                        descr='',
+                    ),
+                    IndexEntry(
+                        name='sphinx_intl',
+                        subtype=0,
+                        docname='index',
+                        anchor='module-sphinx_intl',
+                        extra='',
+                        qualifier='',
+                        descr='',
                     ),
                 ],
             ),
